@@ -60,10 +60,10 @@ spec:
             - key: system:openshift:scc:anyuid
               operator: Equals
               value: "{{request.object.roleRef.name}}"
-        exclude:
-          any:
-            - resources:
-                namespaces:
-                  - openshift*
-                  - kube*
-                  - default
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
