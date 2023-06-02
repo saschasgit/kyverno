@@ -30,3 +30,10 @@ spec:
           spec:
             =(volumes):
               - X(hostPath): "null"
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

@@ -33,3 +33,10 @@ spec:
             =(hostPID): "false"
             =(hostIPC): "false"
             =(hostNetwork): "false"
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

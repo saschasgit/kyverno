@@ -41,3 +41,10 @@ spec:
             containers:
               - =(securityContext):
                   =(procMount): "Default"
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

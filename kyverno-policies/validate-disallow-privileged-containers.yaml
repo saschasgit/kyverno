@@ -37,3 +37,10 @@ spec:
             containers:
               - =(securityContext):
                   =(privileged): "false"
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

@@ -47,3 +47,10 @@ spec:
                 - bind
                 - escalate
                 - impersonate
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

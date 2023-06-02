@@ -31,3 +31,10 @@ spec:
         pattern:
           roleRef: 
             name: "!cluster-admin"
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

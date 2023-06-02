@@ -39,3 +39,10 @@ spec:
             containers:
               - =(ports):
                   - =(hostPort): 0
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

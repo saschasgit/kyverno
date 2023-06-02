@@ -55,3 +55,10 @@ spec:
         pattern:
           roleRef:
             name: "!system:masters"
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

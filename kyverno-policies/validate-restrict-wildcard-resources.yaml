@@ -35,3 +35,10 @@ spec:
             - key: "{{ contains(request.object.rules[].resources[], '*') }}"
               operator: Equals
               value: true
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

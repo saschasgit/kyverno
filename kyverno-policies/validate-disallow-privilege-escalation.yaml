@@ -40,3 +40,10 @@ spec:
             containers:
             - securityContext:
                 allowPrivilegeEscalation: "false"
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default

@@ -44,3 +44,10 @@ spec:
               - projected
               - secret
               - ''
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
