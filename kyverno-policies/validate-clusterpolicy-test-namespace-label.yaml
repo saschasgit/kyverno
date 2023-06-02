@@ -39,5 +39,5 @@ spec:
               labels:
                 any-environment: "true"
         message: All new Namespaces must have an annotaiton for the nodeselector (dev, staging, prod).
-  validationFailureAction: audit
+  validationFailureAction: Audit
 
