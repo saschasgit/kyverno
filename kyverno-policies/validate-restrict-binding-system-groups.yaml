@@ -36,6 +36,7 @@ spec:
         - resources:
             namespaces:
               - openshift*
+              - openshift-config-managed
               - kube*
               - default
     - name: restrict-unauthenticated
