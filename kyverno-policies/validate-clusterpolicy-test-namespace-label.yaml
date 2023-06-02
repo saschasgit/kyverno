@@ -1,0 +1,47 @@
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/description: >-
+      Checks if all namespaces have either set prod=true, staging =true or dev=true
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Namespace
+    policies.kyverno.io/title: Test Namespace Annotation
+  creationTimestamp: '2023-05-19T09:34:23Z'
+  generation: 4
+  name: test-namespace-annotation
+  resourceVersion: '1192372362'
+  uid: d8465cb7-90b4-4dbc-8480-7a5ab9ea57e5
+spec:
+  background: true
+  rules:
+    - exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+      name: test-namespace-annotation
+      validate:
+        anyPattern:
+          - metadata:
+              annotations:
+                openshift.io/node-selector: dev=true
+          - metadata:
+              annotations:
+                openshift.io/node-selector: staging=true
+          - metadata:
+              annotations:
+                openshift.io/node-selector: prod=true
+          - metadata:
+              labels:
+                any-environment: "true"
+        message: All new Namespaces must have an annotaiton for the nodeselector (dev, staging, prod).
+  validationFailureAction: audit
+
