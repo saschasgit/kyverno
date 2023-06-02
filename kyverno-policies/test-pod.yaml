@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: all-containers-need-requests-and-limits
 spec:
-  validationFailureAction: Audit
+  validationFailureAction: audit
   rules:
   - name: check-container-resources
     match:
