@@ -38,12 +38,12 @@ spec:
                 operator: Equals
                 value: true
       exclude:
-      any:
-        - resources:
-            namespaces:
-              - openshift*
-              - kube*
-              - default
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
     - name: check-security-context-roleref
       match:
         any:
