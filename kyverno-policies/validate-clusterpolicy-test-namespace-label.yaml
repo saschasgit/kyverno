@@ -7,11 +7,7 @@ metadata:
     policies.kyverno.io/severity: low
     policies.kyverno.io/subject: Namespace
     policies.kyverno.io/title: Test Namespace Annotation
-  creationTimestamp: '2023-05-19T09:34:23Z'
-  generation: 4
   name: test-namespace-annotation
-  resourceVersion: '1192372362'
-  uid: d8465cb7-90b4-4dbc-8480-7a5ab9ea57e5
 spec:
   background: true
   rules:
