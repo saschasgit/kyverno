@@ -33,11 +33,11 @@ spec:
             name: "!system:anonymous"
       exclude:
         any:
-          - resources:
-              namespaces:
-                - openshift*
-                - kube*
-                - default
+        - resources:
+            namespaces:
+              - openshift*
+              - kube*
+              - default
     - name: restrict-unauthenticated
       match:
         any:
@@ -52,11 +52,11 @@ spec:
             name: "!system:unauthenticated"
       exclude:
         any:
-          - resources:
-              namespaces:
-                - openshift*
-                - kube*
-                - default
+        - resources:
+            namespaces:
+              - openshift*
+              - kube*
+              - default
     - name: restrict-masters
       match:
         any:
@@ -71,8 +71,8 @@ spec:
             name: "!system:masters"
       exclude:
         any:
-          - resources:
-              namespaces:
-                - openshift*
-                - kube*
-                - default
+        - resources:
+            namespaces:
+              - openshift*
+              - kube*
+              - default
