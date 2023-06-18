@@ -1,0 +1,34 @@
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/description: >-
+      Checks if all namespaces have set a label "hello" with the value "world"
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Namespace
+    policies.kyverno.io/title: Test Namespace Annotation
+  name: test-namespace-annotation
+spec:
+  background: false
+  rules:
+    - exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+      name: test-namespace-label
+      validate:
+        anyPattern:
+          - metadata:
+              label:
+                hello: world
+        message: All new Namespaces must have a label "hello" with the value "world".
+  validationFailureAction: audit
+
