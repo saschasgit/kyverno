@@ -1,0 +1,35 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-cm-to-namespace
+spec:
+  rules:
+  - name: add-cm-to-namespace
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+    exclude:
+      any:
+      - resources:
+          namespaces:
+          - kube*
+          - default
+          - openshift*
+          - kyverno
+    generate:
+      synchronize: true
+      apiVersion: v1
+      kind: ConfigMap
+      name: my-configmap
+      # generate the resource in the new namespace
+      namespace: "{{request.object.metadata.name}}"
+      data:
+        kind: ConfigMap
+        metadata:
+          labels:
+            somekey: somevalue
+        data:
+          INFO: "May the force be with you."
+

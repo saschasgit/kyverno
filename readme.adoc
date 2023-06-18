@@ -431,6 +431,11 @@ Und darin finden wir dann die entsprechenden Abschnitt des Requests wie "object"
 
 == Mutation ClusterPolicy "Add Resources to BuildConfig"
 
+Dateien:
+
+04-mutate-clusterpolicy-add-resources-to-buildconfig.yaml
+04-buildconfig.yaml
+
 Wie schon erwähnt, kann Kyverno nicht nur Admission Policies nutzen, sondern auch Mutating Policies. Davon gibt es mehrere Arten. Wir beginnen mit der üblichen Mutation Policy.
 
 Dazu nehmen wir uns folgendes Szenario: Ein Cluster hat gesetzte Limitranges und dort Werte für Requets und Limits. Diese gelten, wenn nichts anderes vom Entwickler konfiguriert wird, für alle Pods, welche auf dem Cluster erstellt werden. Oft benötigen Pods gar nicht so viele Ressourcen, so dass der Wert in den Limitranges entsprechend gewählt ist. Daraus resultiert jedoch, dass Builds, wenn in den BuildConfigs nicht höhere Ressourcenwerte angegeben sind, recht langsam laufen. Wir wollen also erreichen, dass eine BuildConfig immer Ressourcenwerte für Limits besitzt. Entweder, weil der Entwickler welche angegeben hat oder durch unsere Policy.
@@ -509,6 +514,45 @@ Das "+" mit der Klammer bedeutet, dass diese Werte dann hinzugefügt werden, wen
 https://kyverno.io/docs/writing-policies/mutate/#conditional-logic-using-anchors
 https://kyverno.io/docs/writing-policies/validate/#anchors
 
+Nun erstellen wir eine Buildconfig. Dazu einen Imagestream, da sonst kein Tag auf diesen Imagestream gesetzt werden kann:
+
+[source,yaml]
+----
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: mywebsite
+  namespace: a-test
+spec:
+  lookupPolicy:
+    local: false
+----
+
+[source,yaml]
+----
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: mywebsite
+  labels:
+    app: mywebsite
+spec:
+  source:
+    type: Git
+    git:
+      uri: https://github.com/monodot/container-up
+    contextDir: httpd-hello-world
+  strategy:
+    type: Docker                      
+    dockerStrategy:
+      dockerfilePath: Dockerfile    # Look for Dockerfile in: gitUri/contextDir/dockerfilePath
+  output:
+    to:
+      kind: ImageStreamTag
+      name: mywebsite:latest
+----
+
+Und wir sehen, dass die BuildConfig unsere Ressourcen erhalten hat. Wenn wir nun einen Build starten, hat dieser ebenso die Ressourcen, wie auch die daraus resultierenden Pods.
 
 
 
