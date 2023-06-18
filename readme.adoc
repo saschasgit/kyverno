@@ -34,7 +34,7 @@ An dieser Stelle kann nur ein erster Überblick bzw. Einstieg gegeben werden. Ky
 
 https://kyverno.io/docs/installation/methods/
 
-Kyverno wird normalerweise über Helm installiert. Dies kann man direkt machen, so wie es unter obigem Link beschrieben ist. Bei Bedarf kann man sich den aktuellen Chart lokal herunterladen und verwenden. Dieses Beispiel lädt das Chart in das aktuelle Verzeichnis herunter:
+Kyverno wird normalerweise über Helm installiert. Dies kann man direkt machen, so wie es unter obigem Link beschrieben ist. Bei Bedarf kann man sich den aktuellen Chart lokal herunterladen und verwenden. Dieses Beispiel lädt den Chart in das aktuelle Verzeichnis herunter:
 
 [source]
 ----
