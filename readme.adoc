@@ -553,16 +553,13 @@ Und darin finden wir dann die entsprechenden Abschnitt des Requests wie "object"
 
 == Mutation ClusterPolicy "Add Resources to BuildConfig"
 
-Dateien:
-
-04-mutate-clusterpolicy-add-resources-to-buildconfig.yaml
-04-buildconfig.yaml
-
 Wie schon erwähnt, kann Kyverno nicht nur Admission Policies nutzen, sondern auch Mutating Policies.
 
 Dazu nehmen wir uns folgendes Szenario: Ein Cluster hat gesetzte Limitranges und dort Werte für Requets und Limits. Diese gelten, wenn nichts anderes vom Entwickler konfiguriert wird, für alle Pods, welche auf dem Cluster erstellt werden. Oft benötigen Pods gar nicht so viele Ressourcen, so dass der Wert in den Limitranges entsprechend gewählt ist. Daraus resultiert jedoch, dass Builds, wenn in den BuildConfigs nicht höhere Ressourcenwerte angegeben sind, recht langsam laufen. Wir wollen also erreichen, dass eine BuildConfig immer Ressourcenwerte für Limits besitzt. Entweder, weil der Entwickler welche angegeben hat oder durch unsere Policy.
 
 Eine solche Policy kann wie folgt aussehen:
+
+Datei: 04-mutate-clusterpolicy-add-resources-to-buildconfig.yaml
 
 [source,yaml]
 ----
@@ -637,6 +634,8 @@ https://kyverno.io/docs/writing-policies/mutate/#conditional-logic-using-anchors
 https://kyverno.io/docs/writing-policies/validate/#anchors
 
 Nun erstellen wir eine Buildconfig. Dazu einen Imagestream, da sonst kein Tag auf diesen Imagestream gesetzt werden kann:
+
+Datei: 04-buildconfig.yaml (enthält Imagestream und BuildConfig)
 
 [source,yaml]
 ----
