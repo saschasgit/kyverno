@@ -61,6 +61,8 @@ Eine Auswertung der Policyanwendungen auf Clusterebene.
 
 Fangen wir einfach mit einer ersten Policy einmal an. Wir wollen prüfen, ob ein neu ersteller Namespace ein bestimmtes Label enthält. 
 
+Datei: 01-validate-clusterpolicy-check-namespace-label.yaml
+
 [source,yaml]
 ----
 apiVersion: kyverno.io/v2beta1
@@ -114,7 +116,7 @@ Am Ende steht noch "validationFailureAction: audit". Wir möchten zunächst nur,
 
 Wenn diese Policy nun aktiv ist, erstellen wir einmal zwei Namespaces:
 
-[source]
+[source,yaml]
 ----
 kind: Namespace
 apiVersion: v1
@@ -124,13 +126,70 @@ metadata:
     hello: world
 ----
 
-[source]
+[source,yaml]
 ----
 kind: Namespace
 apiVersion: v1
 metadata:
   name: b-test
 ----
+
+Wenn man die Namespaces anlegt, dann passiert zunächst nichts Besonderes. Dadurch, dass wir eine ClusterPolicy haben, erstellt Kyverno nun aber automatisch einen ClusterAdmissionReport:
+
+[source]
+----
+oc get clusteradmissionreport -A
+NAME                                   AGE   PASS   FAIL   WARN   ERROR   SKIP
+55a254a2-eee1-4d29-a6b7-5b1ba890b3be   7s    1      0      0      0       0
+839c2835-c9bd-4f41-a7d3-87cd4d8466c1   5s    0      1      0      0       0
+----
+
+Und hier sehen wir, dass ein Namespace der Regel entsprach ("PASS") und einer nicht ("FAIL").
+
+Wenn wir in einen Report schauen, sehen wir in der YAML, worauf sich der Report bezieht, also in unserem Fall einen bestimmten Namespace und entweder "result: fail" oder "result: pass".
+
+An dieser Stelle ändern wir nun die Policy. Wir löschen nun einmal die beiden Namespaces und verwenden diese Policy, die genau das gleiche macht, nun aber als Action nicht mehr "audit", sondern "enforce" hat:
+
+Datei: 02-validate-clusterpolicy-check-namespace-label.yaml
+
+[source,yaml]
+----
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/description: >-
+      Checks if all namespaces have set a label "hello" with the value "world"
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Namespace
+    policies.kyverno.io/title: Test Namespace Annotation
+  name: test-namespace-annotation
+spec:
+  background: false
+  rules:
+    - exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+      name: test-namespace-label
+      validate:
+        anyPattern:
+          - metadata:
+              label:
+                hello: world
+        message: All new Namespaces must have a label "hello" with the value "world".
+  validationFailureAction: enforce
+----
+
+
 
 CAUTION: Das Problem lauert aber an einer anderen Stelle. Wenn wir nur eine GitOps-Instanz haben, dann haben wir auch nur einen dahinterliegenden GitOps-Serviceaccount mit den entsprechenden Berechtigungen in dem Namespace. Und wenn ein Developerteam GitOps verwendet, dann werden die Ressourcen nicht mit den Berechtigungen des Developers, sondern mit den Berechtigungen des GitOps-Serviceaccounts erstellt. Hat also der Clusteradmin die Möglichkeit, über GitOps eine Networkpolicy auszurollen, dann hat der Developer das in seinem Namespace ebenso.
 
