@@ -537,7 +537,7 @@ spec:
       patchStrategicMerge:
         metadata:
           annotations:
-            created-by: "{{request.userInfo.username}}"
+            created-by: "{{serviceAccountName}}"
 ----
 
 
