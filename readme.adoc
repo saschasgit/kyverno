@@ -719,7 +719,7 @@ spec:
           INFO: "May the force be with you."
 ----
 
-Diese Ressource schaut, ob ein Namespace angelegt wird. Wenn dies der Fall ist, wird zusätzlich eine ConfigMap in dem Namespace angelegt und dieser ConfigMap erhält sowohl ein Label als auch ein Key-Value-Paar als Inhalte.
+Diese Ressource schaut, ob ein Namespace angelegt wird. Wenn dies der Fall ist, wird zusätzlich eine ConfigMap in dem Namespace angelegt und dieser ConfigMap erhält sowohl ein Label als auch ein Key-Value-Paar als Inhalt.
 
 Die Option "synchronize: true" bedeutet, dass Kyverno die Objekte weiterhin im Auge behält. Würde die Regel beispielsweise nur für Namespaces mit einem bestimmten Label gelten und wir würden dieses Label später entfernen, dann würde Kyverno auch die ConfigMap wieder entfernen, da die Policy nun nicht mehr zutrifft.
 
