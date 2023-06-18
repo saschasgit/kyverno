@@ -276,7 +276,7 @@ spec:
 
 Wir haben nun "background: true" konfiguriert. Nun schaut Kyverno nicht nur beim Erstellen eines Objekts nach, sondern prüft einmal alle Objekte auf dem Cluster, die zu der Policy passen. Also werden nun alle Namespaces auf das Label geprüft, außer die Namespaces "openshift*", "kube*" und "default".
 
-Das Ergebnis sehen wir mir wir folgt:
+Wir erhalten dann folgendes Ergebnis:
 
 [source]
 ----
