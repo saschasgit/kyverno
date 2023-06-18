@@ -432,7 +432,7 @@ Wenn wir in die YAML des Deployments für den "kyverno-admission-Controller" sch
 
 Wenn wir nun einen neuen Namespace anlegen und dann die Logs für die Pod des "kyverno-admission-controllers" betrachten, sehen wir dort den AdmissionRequest, der natürlich noch formatiert werden muss.
 
-Und darin finden wir dann die entsprechenden Abschnitt des Requests wie "object" oder "namespace".
+Und darin finden wir dann die entsprechenden Abschnitt des Requests wie "object" oder "namespace". Wenn wir also den Bedarf haben, eine Policy anzulegen, die einen solchen Pfad erfordert, man sich aber nicht sicher ist, wie der Pfad genau ist, dann hilft diese Option weiter.
 
 [source,json]
 ----
