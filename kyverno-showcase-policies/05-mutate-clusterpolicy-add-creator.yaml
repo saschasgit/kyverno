@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-creator
+spec:
+  background: false
+  rules:
+  - name: add-creator
+    match:
+      any:
+      - resources:
+          kinds:
+          - Deployment
+          - BuildConfig
+          - Namespace
+          - DeploymentConfig
+          - StatefulSet
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            created-by: "{{request.userInfo.username}}"
