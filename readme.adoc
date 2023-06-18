@@ -5,6 +5,8 @@
 
 Kyverno ist ein Admission Controller, welcher sehr viele Möglichkeiten gibt, um über Policies Vorgaben auf einem OpenShift-Cluster umzusetzen. Dabei ist Kyverno "Kubernetes-native" und verwendet als Sprache für die Polices YAML, was es für viele einfacher macht, als Polices in Rego zu schreiben.
 
+Alle Dateien, die wir hier nutzen, sind auch im Ordner "kyverno-showcase-policies" verfügbar. Wenn in einem Abschnitt eine Datei genutzt wird, steht es direkt unter dem Abschnittsnamen.
+
 == Admission Controller
 
 Zunächst kurz ein paar Sätze dazu, was überhaupt "Admission Controller" sind. Immer, wenn ein Objekt in OpenShift angelegt, verändert oder gelöscht wird, läuft diese Anforderung über die API von OpenShift. Und das unabhängig davon, ob man den OC-Client oder die Weboberfläche verwendet.
