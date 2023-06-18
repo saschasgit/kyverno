@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   annotations:
     policies.kyverno.io/description: >-
-      Checks if a role or a clusterrole has wildcards in the verbs
+      Checks if a role has wildcards in the verbs
     policies.kyverno.io/severity: low
     policies.kyverno.io/subject: Role
     policies.kyverno.io/title: Test Roles
@@ -25,7 +25,6 @@ spec:
         - resources:
             kinds:
               - Role
-              - ClusterRole
       validate:
         message: "Use of a wildcard ('*') in any verbs is forbidden."
         deny:
