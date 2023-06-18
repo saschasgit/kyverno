@@ -735,7 +735,7 @@ Kyverno besitzt auch ein Kommandozeilentool: Kyverno CLI: https://kyverno.io/doc
 
 Das jeweils aktuelle Release finden wir unter https://github.com/kyverno/kyverno/releases
 
-Man muss unbedingt darauf achten, dass die CLI Version zur eingesetzten Kyverno Version passt. Bei der 3.0.9 von Kyverno ergaben sich da einige wesentliche Änderungen. Zur 3.0.0 passt die CLI Version 1.10.0:
+Man muss unbedingt darauf achten, dass die CLI Version zur eingesetzten Kyverno Version passt. Bei der 3.0.0 von Kyverno ergaben sich da einige wesentliche Änderungen. Zur 3.0.0 passt die CLI Version 1.10.0:
 
 [source]
 ----
