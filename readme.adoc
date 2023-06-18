@@ -205,7 +205,7 @@ spec:
   validationFailureAction: enforce
 ----
 
-Und jetzt sehen wir durchaus sofort die Auswirkung. Der erste Namespace lässt sich problemlos anlegen. Aber beim zweiten Namespace erhalten wir eine Fehlermeldung, welche auch die "message" unserer Policy enthält:
+Wenn wir jetzt die obigen Namespaces erneut anlegen, sehen wir durchaus sofort die Auswirkung. Der erste Namespace lässt sich problemlos anlegen. Aber beim zweiten Namespace erhalten wir eine Fehlermeldung, welche auch die "message" unserer Policy enthält:
 
 [source]
 ----
