@@ -148,7 +148,7 @@ Und hier sehen wir, dass ein Namespace der Regel entsprach ("PASS") und einer ni
 
 Wenn wir in einen Report schauen, sehen wir in der YAML, worauf sich der Report bezieht, also in unserem Fall einen bestimmten Namespace und entweder "result: fail" oder "result: pass".
 
-An dieser Stelle ändern wir nun die Policy. Wir löschen nun einmal die beiden Namespaces und verwenden diese Policy, die genau das gleiche macht, nun aber als Action nicht mehr "audit", sondern "enforce" hat:
+An dieser Stelle ändern wir nun die Policy. Wir löschen nun einmal die beiden Namespaces und die Policy und verwenden diese neue Policy, die genau das gleiche macht, nun aber als Action nicht mehr "audit", sondern "enforce" hat:
 
 Datei: 02-validate-clusterpolicy-check-namespace-label.yaml
 
@@ -187,6 +187,75 @@ spec:
                 hello: world
         message: All new Namespaces must have a label "hello" with the value "world".
   validationFailureAction: enforce
+----
+
+Und jetzt sehen wir durchaus sofort die Auswirkung. Der erste Namespace lässt sich problemlos anlegen. Aber beim zweiten Namespace erhalten wir eine Fehlermeldung, welche auch die "message" unserer Policy enthält:
+
+[source]
+----
+Error from server: error when creating ".\\01-namespace-b.yaml": admission webhook "validate.kyverno.svc-fail" denied the request:
+
+resource Namespace//b-test was blocked due to the following policies
+
+enforce-namespace-annotation:
+  test-namespace-label: 'validation error: All new Namespaces must have a label "hello"
+    with the value "world". rule test-namespace-label[0] failed at path /metadata/labels/hello/'
+----
+
+Und wenn wir uns dann die ClusterAdmissionReports ansehen, stellen wir fest, dass wir nur einen erhalten, nicht zwei:
+
+[source]
+----
+oc get clusteradmissionreport -A
+NAME                                   AGE   PASS   FAIL   WARN   ERROR   SKIP
+4af50de4-22bd-48e8-97a9-c805559462ce   77s   1      0      0      0       0
+----
+
+Der Grund ist, dass im "Enforce" Modus keine Reports erstellt werden können, da die dazugehörige Ressource gar nicht existiert. Sie wurde ja geblockt.
+
+== Ein Background Check
+
+Datei: 03-validate-clusterpolicy-check-namespace-label.yaml
+
+Nun löschen wir wieder unsere Policy und legen dann auch den zweiten Namespace einmal an, so dass wir beide Namespaces haben.
+
+Dann
+
+[source,yaml]
+----
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/description: >-
+      Checks if all namespaces have set a label "hello" with the value "world"
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Namespace
+    policies.kyverno.io/title: Background Test Namespace Label
+  name: background-test-namespace-label
+spec:
+  background: true
+  rules:
+    - exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+      name: test-namespace-label
+      validate:
+        anyPattern:
+          - metadata:
+              labels:
+                hello: world
+        message: All new Namespaces must have a label "hello" with the value "world".
+  validationFailureAction: audit
 ----
 
 

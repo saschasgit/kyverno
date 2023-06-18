@@ -6,10 +6,10 @@ metadata:
       Checks if all namespaces have set a label "hello" with the value "world"
     policies.kyverno.io/severity: low
     policies.kyverno.io/subject: Namespace
-    policies.kyverno.io/title: Test Namespace Label
-  name: test-namespace-label
+    policies.kyverno.io/title: Background Test Namespace Label
+  name: background-test-namespace-label
 spec:
-  background: false
+  background: true
   rules:
     - exclude:
         any:
