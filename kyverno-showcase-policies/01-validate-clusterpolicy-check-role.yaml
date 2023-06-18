@@ -13,6 +13,13 @@ spec:
   background: true
   rules:
     - name: wildcard-verbs
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
       match:
         any:
         - resources:
