@@ -227,7 +227,7 @@ NAME                                   AGE   PASS   FAIL   WARN   ERROR   SKIP
 4af50de4-22bd-48e8-97a9-c805559462ce   77s   1      0      0      0       0
 ----
 
-Der Grund ist, dass im "Enforce" Modus keine Reports erstellt werden können, da die dazugehörige Ressource gar nicht existiert. Sie wurde ja geblockt.
+Der Grund ist, dass im "Enforce" Modus keine Reports für abgelehnte Ressourcen erstellt werden können, da die dazugehörige Ressource gar nicht existiert. Sie wurde ja geblockt.
 
 == Ein Background Check
 
