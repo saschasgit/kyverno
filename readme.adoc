@@ -4,17 +4,115 @@
 
 == Vorwort
 
-Grundsätzlich kann man Namespaces mit Red Hat GitOps erstellen. Entweder, insbesondere bei einer älteren Operatorversion, indem man diese als Ressource in einer YAML-Datei deklariert und diese mit Red Hat GitOps ausrollte oder, bei einer neuen Operatorversion, indem man die Erstellung des Namespaces einfach in der Syncoptionen der Argo-Application angibt. Der Unterschied zwischen den Operatorversionen ist, dass man nur in den neuen bei der Syncoption auch Labels und Annotations direkt mitgeben kann, diese aber wichtig sind, damit der Namespace anschließend auch von Red Hat GitOps verwaltet werden kann, da die Berechtigung über ein Label gesetzt werden.
+Kyverno ist ein Admission Controller, welcher sehr viele Möglichkeiten gibt, um über Policies Vorgaben auf einem OpenShift-Cluster umzusetzen. Dabei ist Kyverno "Kubernetes-native" und verwendet als Sprache für die Polices YAML, was es für viele einfacher macht, als Polices in Rego zu schreiben.
 
-In der Regel haben wir aber getrennte Gruppen, welche auf einem OpenShift Server unterwegs sind. Das sind einerseits die Clusteradministratoren und andererseits die Developerteams.
+== Admission Controller
 
-Problematisch kann es nun werden, wenn sowohl die Clusteradministratoren als auch die Developerteams Red Hat GitOps verwenden möchten. Denn auf einmal möchten zwei verschiedene Gruppen auf die gleichen Namespaces zugreifen, um dort jeweils ihre Konfigurationen zu hinterlegen. Die Clusteradmins möchten beispielsweise Ressourcequotas, Limitranges oder Networkpolicies im Namespace konfigurieren und die Developer möchten ihrerseits natürlich Deployments, Configmaps, Routen und mehr konfigurieren.
+Zunächst kurz ein paar Sätze dazu, was überhaupt "Admission Controller" sind. Immer, wenn ein Objekt in OpenShift angelegt, verändert oder gelöscht wird, läuft diese Anforderung über die API von OpenShift. Und das unabhängig davon, ob man den OC-Client oder die Weboberfläche verwendet.
 
-== Option 1: Nur eine Red hat GitOps Instanz
+Und während das Opject über die API läuft, gibt einem OpenShift die Möglichkeit, bei beliebigen Objekten einzugreifen. Die Objekte können verändert und überprüft werden.
 
-Diese Option klingt zunächst leicht, ist sie aber nicht, da sie schwierig zu konfigurieren ist. Natürlich kann man nur eine Instanz von Red Hat GitOps installieren und dort über RBAC die Berechtigungen trennen, so dass Developerteams nur Zugriff auf ihre jeweiligen Argo-Applikationsprojekte haben.
+https://cloud.redhat.com/blog/dynamic-admission-control
 
-image:pictures/oneargo.png["Nur eine Instanz"]
+image:pictures/admission-controller.png["Admission Controller"]
+
+Wie man sieht, gibt es eine "Mutating admission" und eine "Validating admission", über die man durch den Webhook eingreifen kann. Und genau diesen Mechanismus nutzen Admission Controller.
+
+Auf einem OpenShift Cluster gibt es unterschiedliche Admission Controller. Ein Beispiel ist der Red Hat Service Mesh, wenn man diesen Operator verwendet. Die Control Plane des Service Meshs prüft beispielsweise über einen eigenen Admission Controller, ob eine bestimmte Annotation in einem Deployment vorhanden ist und fügt dann allen Pods einen Envoy-Proxy als zusätzlichen Container hinzu. Dabei wird die "Mutating admission" verwendet.
+
+Ein Beispiel für die "Validating admission" sind RASP-Tools wie "Red Hat Advanced Cluster Security", "Aquasec" oder "Neuvector". Diese RASP-Tools wollen Objekte nicht verändern, aber überprüfen, ob diese vorgegebenen Anforderungen entsprechen, um die Sicherheit zu gewährleisten.
+
+Kyverno kann beide ansprechen, sowohl "Mutating admission" als auch "Validating admission" und ist damit extrem flexibel einsetzbar.
+
+== Die Kyverno Dokumentation
+
+Die, sehr umfangreiche, Dokumentation zu Kyverno findet man unter https://kyverno.io/docs/
+
+An dieser Stelle kann nur ein erster Überblick bzw. Einstieg gegeben werden. Kyverno ist viel zu umfangreich, um alles hier darzustellen.
+
+== Die Installation von Kyverno
+
+https://kyverno.io/docs/installation/methods/
+
+Kyverno wird normalerweise über Helm installiert. Dies kann man direkt machen, so wie es unter obigem Link beschrieben ist. Bei Bedarf kann man sich den aktuellen Chart lokal herunterladen und verwenden. Dieses Beispiel lädt das Chart in das aktuelle Verzeichnis herunter:
+
+[source]
+----
+helm pull kyverno/kyverno --untar=true --untardir=.
+----
+
+== Die wichtigsten CRDs von Kyverno
+
+Kyverno bringt einige CRDs mit sich. Die wichtigsten sind:
+
+Policy
+Eine Policy, welche sich nur auf einen angegebenen Namespace bezieht.
+
+ClusterPolicy
+Eine clusterweite Policy
+
+AdmissionReport
+Eine Auswertung der Policyanwendungen auf Namespaceabene.
+
+ClusterAdmissionReport
+Eine Auswertung der Policyanwendungen auf Clusterebene.
+
+== ClusterPolicy "Check Namespace"
+
+Fangen wir einfach mit einer ersten Policy einmal an. Wir wollen prüfen, ob ein neu ersteller Namespace ein bestimmtes Label enthält. 
+
+[source,yaml]
+----
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/description: >-
+      Checks if all namespaces have set a label "hello" with the value "world"
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Namespace
+    policies.kyverno.io/title: Test Namespace Annotation
+  name: test-namespace-annotation
+spec:
+  background: false
+  rules:
+    - exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+      name: test-namespace-label
+      validate:
+        anyPattern:
+          - metadata:
+              label:
+                hello: world
+        message: All new Namespaces must have a label "hello" with the value "world".
+  validationFailureAction: audit
+----
+
+Die wichtigsten Elemente der Policy kurz erklärt:
+
+Am "kind" sehen wir, dass es sich natürlich um eine ClusterPolicy handelt. Anders würde das prüfen von Namespaces auch keinen Sinn ergeben.
+
+Im Abschnitt "rules" finden wir die verschiedenen Abschnitte "exclude", "match" und "validate".
+
+Im Abschnitt "exclude" stehen dabei Regeln, auf die diese Policy nicht zutreffen soll. Wir möchten nicht, dass diese Regel auf Namespaces angewendet wird, die mit "openshift" oder "kube" beginnen und sie soll auch nicht für einen Namespace "default" gelten.
+
+Im Abschnitt "match" befindet sich die Regel, worauf die Policy angewendet werden soll. Sie woll für alle Ressoucen vom Typ "Namespace" gelten.
+
+Im Abschnitt "validate" steht, was genau geprüft werden soll. Dass es diesen Abschnitt gibt bedeutet, dass wir hier eine "Validate admission" haben. Geprüft wird, ob das angegebene Label vorhanden ist.
+
+Am Ende steht noch "validationFailureAction: audit". Wir möchten zunächst nur, dass die Policy im "Audit" Modus läuft. Dann wird sie bereits verwendet, aber sie wird noch nicht erzwungen. Ein Namespace kann daher jetzt auch dann noch angelegt werden, wenn das Label nicht vorhanden ist. Die Alternative wäre "validationFailureAction: enforce".
+
+
 
 CAUTION: Das Problem lauert aber an einer anderen Stelle. Wenn wir nur eine GitOps-Instanz haben, dann haben wir auch nur einen dahinterliegenden GitOps-Serviceaccount mit den entsprechenden Berechtigungen in dem Namespace. Und wenn ein Developerteam GitOps verwendet, dann werden die Ressourcen nicht mit den Berechtigungen des Developers, sondern mit den Berechtigungen des GitOps-Serviceaccounts erstellt. Hat also der Clusteradmin die Möglichkeit, über GitOps eine Networkpolicy auszurollen, dann hat der Developer das in seinem Namespace ebenso.
 
