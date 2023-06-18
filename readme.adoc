@@ -5,7 +5,7 @@
 
 Kyverno ist ein Admission Controller, welcher sehr viele Möglichkeiten gibt, um über Policies Vorgaben auf einem OpenShift-Cluster umzusetzen. Dabei ist Kyverno "Kubernetes-native" und verwendet als Sprache für die Polices YAML, was es für viele einfacher macht, als Polices in Rego zu schreiben.
 
-Alle Dateien, die wir hier nutzen, sind auch im Ordner "kyverno-showcase-policies" verfügbar. Wenn in einem Abschnitt eine Datei genutzt wird, steht es direkt unter dem Abschnittsnamen.
+Alle Dateien, die wir hier nutzen, sind auch im Ordner "kyverno-showcase-policies" verfügbar. Wenn in einem Abschnitt eine Datei genutzt wird, steht im Abschnitt ein entsprechender Hinweis.
 
 == Admission Controller
 
@@ -73,7 +73,7 @@ Eventuell wird hier erst in einem späteren Abschnitt deutlich, was genau damit 
 
 Fangen wir einfach mit einer ersten Policy einmal an. Wir wollen prüfen, ob ein neu ersteller Namespace ein bestimmtes Label enthält. 
 
-Datei: 01-validate-clusterpolicy-check-namespace-label.yaml
+Dateien: 01-validate-clusterpolicy-check-namespace-label.yaml
 
 [source,yaml]
 ----
@@ -114,7 +114,7 @@ spec:
 
 Die wichtigsten Elemente der Policy kurz erklärt:
 
-Am "kind" sehen wir, dass es sich natürlich um eine ClusterPolicy handelt. Anders würde das prüfen von Namespaces auch keinen Sinn ergeben.
+Am "kind" sehen wir, dass es sich natürlich um eine ClusterPolicy handelt. Anders würde das Prüfen von Namespaces auch keinen Sinn ergeben.
 
 Im Abschnitt "rules" finden wir die verschiedenen Abschnitte "exclude", "match" und "validate".
 
@@ -128,6 +128,8 @@ Am Ende steht noch "validationFailureAction: audit". Wir möchten zunächst nur,
 
 Wenn diese Policy nun aktiv ist, erstellen wir einmal zwei Namespaces:
 
+Datei: 01-namespace-a.yaml
+
 [source,yaml]
 ----
 kind: Namespace
@@ -137,6 +139,8 @@ metadata:
   labels:
     hello: world
 ----
+
+Datei: 01-namespace-b.yaml
 
 [source,yaml]
 ----
