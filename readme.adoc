@@ -45,21 +45,28 @@ helm pull kyverno/kyverno --untar=true --untardir=.
 
 Kyverno bringt einige CRDs mit sich. Die wichtigsten sind:
 
-Policy
-Eine Policy, welche sich nur auf einen angegebenen Namespace bezieht.
+[cols="1,1"]
+|===
+|Policy
+|Eine Policy, welche sich nur auf einen angegebenen Namespace bezieht
 
-ClusterPolicy
-Eine clusterweite Policy
+|ClusterPolicy
+|Eine clusterweite Policy
 
-AdmissionReport
-Eine Auswertung der Policyanwendungen auf Namespaceabene.
+|AdmissionReport
+|Eine Auswertung der Policyanwendungen auf Namespaceebene
 
-ClusterAdmissionReport
-Eine Auswertung der Policyanwendungen auf Clusterebene.
+|ClusterAdmissionReport
+|Eine Auswertung der Policyanwendungen auf Clusterebene
 
-BackgroundScanReport
+|BackgroundScanReport
+|Eine Auswertung der BackgroundScans auf Namespaceebene
 
-ClusterBackgroundScanReport
+|ClusterBackgroundScanReport
+|Eine Auswertung der BackgroundScans auf Clusterebene
+|=== 
+
+Eventuell wird hier erst in einem späteren Abschnitt deutlich, was genau damit gemeint ist.
 
 == Admission ClusterPolicy "Check Namespace"
 
