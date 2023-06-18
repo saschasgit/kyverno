@@ -231,11 +231,11 @@ Der Grund ist, dass im "Enforce" Modus keine Reports für abgelehnte Ressourcen 
 
 == Ein Background Check
 
-Datei: 03-validate-clusterpolicy-check-namespace-label.yaml
-
 Nun löschen wir wieder unsere Policy und legen dann auch den zweiten Namespace einmal an, so dass wir beide Namespaces haben.
 
-Dann
+Dann nutzen wir nun die folgende Policy:
+
+Datei: 03-validate-clusterpolicy-check-namespace-label.yaml
 
 [source,yaml]
 ----
