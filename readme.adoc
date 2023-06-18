@@ -296,7 +296,7 @@ Man sieht schon daran, dass man bei Policies, welche "validationFailureAction: e
 
 Den Namespace "kyverno" kann man übrigens durch entsprechende Konfiguration der "values.yaml" im Helm-Chart von Kyverno direkt von allen Policies ausnehmen.
 
-Grundsätzlich ist es eine gute Idee, wenn möglich, zunächst einen BackgroundScan zu aktivieren.
+Grundsätzlich ist es eine gute Idee, zunächst einen BackgroundScan zu aktivieren und zu sehen, wie sich die Policy auf dem Cluster auswirkt.
 
 Backgroundscans arbeiten immer im Modus "Audit", auch wenn "Enforce" in der Policy konfiguriert ist. Es gibt aber einen Unterschied bei den Reports: https://main.kyverno.io/docs/policy-reports/background/
 
