@@ -15,8 +15,10 @@ spec:
           - Namespace
           - DeploymentConfig
           - StatefulSet
+          - Pod
     mutate:
       patchStrategicMerge:
         metadata:
           annotations:
             created-by: "{{request.userInfo.username}}"
+            also-by: "{{serviceAccountName}}"
