@@ -509,36 +509,7 @@ Das "+" mit der Klammer bedeutet, dass diese Werte dann hinzugefügt werden, wen
 https://kyverno.io/docs/writing-policies/mutate/#conditional-logic-using-anchors
 https://kyverno.io/docs/writing-policies/validate/#anchors
 
-== Mutation ClusterPolicy "Add Creator"
 
-Ein anderes Beispiel ist folgende Mutation Policy:
-
-[source,yaml]
-----
-resour
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
-metadata:
-  name: add-creator
-spec:
-  background: false
-  rules:
-  - name: add-creator
-    match:
-      any:
-      - resources:
-          kinds:
-          - Deployment
-          - BuildConfig
-          - Namespace
-          - DeploymentConfig
-          - StatefulSet
-    mutate:
-      patchStrategicMerge:
-        metadata:
-          annotations:
-            created-by: "{{serviceAccountName}}"
-----
 
 
 == Kyverno CLI
