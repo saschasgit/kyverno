@@ -27,7 +27,7 @@ spec:
       validate:
         anyPattern:
           - metadata:
-              label:
+              labels:
                 hello: world
         message: All new Namespaces must have a label "hello" with the value "world".
   validationFailureAction: audit
