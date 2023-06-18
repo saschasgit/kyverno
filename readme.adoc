@@ -112,7 +112,25 @@ Im Abschnitt "validate" steht, was genau geprüft werden soll. Dass es diesen Ab
 
 Am Ende steht noch "validationFailureAction: audit". Wir möchten zunächst nur, dass die Policy im "Audit" Modus läuft. Dann wird sie bereits verwendet, aber sie wird noch nicht erzwungen. Ein Namespace kann daher jetzt auch dann noch angelegt werden, wenn das Label nicht vorhanden ist. Die Alternative wäre "validationFailureAction: enforce".
 
+Wenn diese Policy nun aktiv ist, erstellen wir einmal zwei Namespaces:
 
+[source]
+----
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: a-test
+  labels:
+    hello: world
+----
+
+[source]
+----
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: b-test
+----
 
 CAUTION: Das Problem lauert aber an einer anderen Stelle. Wenn wir nur eine GitOps-Instanz haben, dann haben wir auch nur einen dahinterliegenden GitOps-Serviceaccount mit den entsprechenden Berechtigungen in dem Namespace. Und wenn ein Developerteam GitOps verwendet, dann werden die Ressourcen nicht mit den Berechtigungen des Developers, sondern mit den Berechtigungen des GitOps-Serviceaccounts erstellt. Hat also der Clusteradmin die Möglichkeit, über GitOps eine Networkpolicy auszurollen, dann hat der Developer das in seinem Namespace ebenso.
 
