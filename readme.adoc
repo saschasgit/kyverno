@@ -418,7 +418,7 @@ Wenn wir uns dann die Reports für unseren Namespace ansehen, finden wir, wie er
 
 == Der AdmissionRequest
 
-Es gibt Policies, in welchen man sich auf einen bestimmten JSON-Pfad beziehen muss. In solchen Policies sieht man dann z.B. einen Pfad wie "request.object" oder "request.namespace". Diese Pfade findet man jedoch in Ressourcen wie einem Namespace nicht. Der Grund ist, dass am Admission Controller nicht das Objekt "Namespace" ankommt, sondern ein "AdmissionRequest" für ein Namespace-Objekt.
+Es gibt Policies, in welchen man sich auf einen bestimmten JSON-Pfad beziehen muss, wie die obige Policy für die Roles. In solchen Policies sieht man dann z.B. einen Pfad wie "request.object" oder "request.namespace". Diese Pfade findet man jedoch in Ressourcen wie einem Namespace nicht. Der Grund ist, dass am Admission Controller nicht das Objekt "Namespace" ankommt, sondern ein "AdmissionRequest" für ein Namespace-Objekt.
 
 Informationen dazu findet man unter https://kyverno.io/docs/writing-policies/variables/
 
