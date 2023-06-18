@@ -7,12 +7,12 @@ metadata:
     policies.kyverno.io/severity: low
     policies.kyverno.io/subject: Role
     policies.kyverno.io/title: Test Roles
-  name: test-roles
+  name: wildcard-verbs-in-roles
 spec:
   validationFailureAction: audit
   background: true
   rules:
-    - name: wildcard-verbs
+    - name: wildcard-verbs-in-roles
       exclude:
         any:
           - resources:

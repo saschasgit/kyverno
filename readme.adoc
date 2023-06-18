@@ -300,17 +300,127 @@ Grundsätzlich ist es eine gute Idee, wenn möglich, zunächst einen BackgroundS
 
 Backgroundscans arbeiten immer im Modus "Audit", auch wenn "Enforce" in der Policy konfiguriert ist. Es gibt aber einen Unterschied bei den Reports: https://main.kyverno.io/docs/policy-reports/background/
 
-== Einschränkung der BackgroundScans
+== Admission ClusterPolicy "Wildcard Verbs in Roles"
 
-Die BackgroundScans haben eine wichtige Einschränkung, die unten auf der Seite beschrieben ist: https://main.kyverno.io/docs/policy-reports/background/
+Wir löschen nun die obige ClusterPolicy für den Namespace und legen eine andere ClusterPolicy an:
 
-Sie funktionieren nur bei Objekten aus den Bereichen "request.object" und "request.namespace". Daher funktionieren sie nicht bei z.B. Rollen.
+Datei: 03-validate-clusterpolicy-check-role.yaml
 
-Was aber hat es mit dem Bereich "request.object" überhaupt auf sich? Denn in einer Ressource wie "Namespace" finden wir den Bereich nicht. Das liegt daran, dass am Admission Controller nicht das Objekt "Namespace" ankommt, sondern ein "AdmissionRequest" für ein Namespace-Objekt.
+[source,yaml]
+----
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/description: >-
+      Checks if a role has wildcards in the verbs
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Role
+    policies.kyverno.io/title: Test Roles
+  name: wildcard-verbs-in-roles
+spec:
+  validationFailureAction: audit
+  background: true
+  rules:
+    - name: wildcard-verbs-in-roles
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - openshift*
+                - kube*
+                - default
+      match:
+        any:
+        - resources:
+            kinds:
+              - Role
+      validate:
+        message: "Use of a wildcard ('*') in any verbs is forbidden."
+        deny:
+          conditions:
+            any:
+            - key: "{{ contains(request.object.rules[].verbs[], '*') }}"
+              operator: Equals
+              value: true
+----
 
-Informationen dazu findet man unter https://kyverno.io/docs/writing-policies/variables/
+Diese Policy schaut durch den BackgroundScan auf alle Rollen, die es auf dem Cluster gibt und wertet aus, ob in den Verbs der Rolle eine Wildcard ist.
+
+Wir legen im Namespace "a-test" nun einmal zwei Rollen an:
+
+Datei: 03-role-a.yaml
+
+[source,yaml]
+----
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: testa
+  namespace: a-test
+rules:
+  - verbs:
+      - get
+      - watch
+      - list
+    apiGroups:
+      - ''
+    resources:
+      - pods
+----
+
+Datei: 03-role-b.yaml
+
+[source,yaml]
+----
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: testb
+  namespace: a-test
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - pods
+----
+
+Wenn wir dann in unseren ClusterBackgroundScanReport schauen, sehen wir: Nichts
+
+[source]
+----
+oc get clusterbackgroundscanreport -A
+No resources found
+----
+
+Der Grund ist, dass sich dalle Reports nicht auf die Art der Policy (Policy <-> ClusterPolicy) beziehen, sondern darauf, ob das zu prüfende Objekt ein Namespacegebundenes Objekt oder ein Clusterobjekt ist. Wir müssen daher in die "BackgroundScanReports" schauen:
+
+[source]
+----
+oc get backgroundscanreport -A
+NAMESPACE              NAME                                   PASS   FAIL   WARN   ERROR   SKIP   AGE
+a-test                 26e04151-5dc2-43ef-83c3-822389ff6c84   1      0      0      0       0      43s
+a-test                 e85c342e-3282-4ce8-9a24-4c5264c3d8a8   0      1      0      0       0      43s
+hostpath-provisioner   7a773074-e813-43fc-b40a-a9fa457bfe9e   1      0      0      0       0      43s
+kyverno                21c0e001-18d6-4f2e-a670-61ccd3b07142   1      0      0      0       0      43s
+kyverno                3971eb09-fd19-453e-bb39-780543bdef09   1      0      0      0       0      43s
+kyverno                3fa9f32c-275f-494b-822c-ba6980fee5aa   1      0      0      0       0      43s
+kyverno                41c3e095-cd4d-41e0-825d-3954d24f0bd8   1      0      0      0       0      43s
+kyverno                5770dfec-380d-44f7-a00c-a025bf1a540f   1      0      0      0       0      43s
+kyverno                6c3645e7-a5b2-49cc-a097-168ce84c2cf8   0      1      0      0       0      43s
+kyverno                a63cac2b-b168-4dda-9171-df9758fb5b42   1      0      0      0       0      43s
+kyverno                c8f0e03d-6d71-40ca-9523-962ea17687e9   1      0      0      0       0      43s
+----
+
+Wenn wir uns dann die Reports für unseren Namespace ansehen, finden wir, wie erwartet, die Auswertung für unsere beiden Rollen.
 
 == Der AdmissionRequest
+
+Es gibt Policies, in welchen man sich auf einen bestimmten JSON-Pfad beziehen muss. In solchen Policies sieht man dann z.B. einen Pfad wie "request.object" oder "request.namespace". Diese Pfade findet man jedoch in Ressourcen wie einem Namespace nicht. Der Gund ist, dass am Admission Controller nicht das Objekt "Namespace" ankommt, sondern ein "AdmissionRequest" für ein Namespace-Objekt.
+
+Informationen dazu findet man unter https://kyverno.io/docs/writing-policies/variables/
 
 Kyverno kann, im Gegensatz zu vielen anderen Tools, den AdmissionRequest sichtbar machen. Diesen kann man nämlich nicht direkt über "oc" auslesen. Zudem ist es auch ein flüchtiges Objekt, welches nur kurzfristig existiert.
 
