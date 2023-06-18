@@ -6,8 +6,8 @@ metadata:
       Checks if all namespaces have set a label "hello" with the value "world"
     policies.kyverno.io/severity: low
     policies.kyverno.io/subject: Namespace
-    policies.kyverno.io/title: Test Namespace Annotation
-  name: test-namespace-annotation
+    policies.kyverno.io/title: Enforce Namespace Annotation
+  name: enforce-namespace-annotation
 spec:
   background: false
   rules:
