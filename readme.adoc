@@ -18,7 +18,7 @@ image:pictures/admission-controller.png["Admission Controller"]
 
 Wie man sieht, gibt es eine "Mutating admission" und eine "Validating admission", über die man durch den Webhook eingreifen kann. Und genau diesen Mechanismus nutzen Admission Controller.
 
-Auf einem OpenShift Cluster gibt es unterschiedliche Admission Controller. Ein Beispiel ist der Red Hat Service Mesh, wenn man diesen Operator verwendet. Die Control Plane des Service Meshs prüft beispielsweise über einen eigenen Admission Controller, ob eine bestimmte Annotation in einem Deployment vorhanden ist und fügt dann allen Pods einen Envoy-Proxy als zusätzlichen Container hinzu. Dabei wird die "Mutating admission" verwendet.
+Auf einem OpenShift Cluster gibt es unterschiedliche Admission Controller. Ein Beispiel ist der Red Hat Service Mesh. Die Control Plane des Service Meshs prüft beispielsweise über einen eigenen Admission Controller, ob eine bestimmte Annotation in einem Deployment vorhanden ist und fügt dann allen Pods einen Envoy-Proxy als zusätzlichen Container hinzu. Dabei wird die "Mutating admission" verwendet.
 
 Ein Beispiel für die "Validating admission" sind RASP-Tools wie "Red Hat Advanced Cluster Security", "Aquasec" oder "Neuvector". Diese RASP-Tools wollen Objekte nicht verändern, aber überprüfen, ob diese vorgegebenen Anforderungen entsprechen, um die Sicherheit zu gewährleisten.
 
