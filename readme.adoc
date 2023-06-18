@@ -1,5 +1,4 @@
 = Kyverno - Eine Übersicht
-
 :toc:
 
 == Vorwort
