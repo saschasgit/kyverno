@@ -630,7 +630,7 @@ resources:
 
 Das "+" mit der Klammer bedeutet, dass diese Werte dann hinzugefügt werden, wenn diese noch nicht existieren. So kann der Entwickler trotzdem eigene Werte angeben. Kyverno kennt verschiedene solcher Methoden:
 
-https://kyverno.io/docs/writing-policies/mutate/#conditional-logic-using-anchors
+https://kyverno.io/docs/writing-policies/mutate/#conditional-logic-using-anchors +
 https://kyverno.io/docs/writing-policies/validate/#anchors
 
 Nun erstellen wir eine Buildconfig. Dazu einen Imagestream, da sonst kein Tag auf diesen Imagestream gesetzt werden kann:
