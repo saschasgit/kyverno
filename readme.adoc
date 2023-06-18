@@ -288,7 +288,7 @@ NAME                                   PASS   FAIL   WARN   ERROR   SKIP   AGE
 adc0ab33-37f2-4bb1-86f1-952c2103cf54   0      1      0      0       0      104s
 ----
 
-Wir sehen, dass wir einen Namespace haben, der das Label besitzt, unseren Namespace "a-test".
+Zur Auswertung müssen wir in die einzelnen Reports schauen. Wir sehen, dass wir einen Namespace haben, der das Label besitzt, unseren Namespace "a-test".
 
 Dann sehen wir, dass es drei Namespaces gibt, welche das Label nicht haben. Hier waren dies: b-test, hostpath-provisioner und kyverno.
 
