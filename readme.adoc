@@ -294,25 +294,25 @@ Dann sehen wir, dass es drei Namespaces gibt, welche das Label nicht haben. Hier
 
 Man sieht schon daran, dass man bei Policies, welche "validationFailureAction: enforce" verwenden, wirklich aufpassen muss, damit man nicht die Erstellung von Ressourcen verhindert, welche angelegt werden sollen oder gar müssen.
 
-Den Namespace "kyverno" kann man übrigens durch entsprechende Konfiguration der "values.yaml" für Kyverno direkt von allen Policies ausnehmen.
+Den Namespace "kyverno" kann man übrigens durch entsprechende Konfiguration der "values.yaml" im Helm-Chart von Kyverno direkt von allen Policies ausnehmen.
 
-Daher ist es eine gute Idee, wenn möglich, zunächst einen BackgroundScan zu aktivieren.
+Grundsätzlich ist es eine gute Idee, wenn möglich, zunächst einen BackgroundScan zu aktivieren.
 
 Backgroundscans arbeiten immer im Modus "Audit", auch wenn "Enforce" in der Policy konfiguriert ist. Es gibt aber einen Unterschied bei den Reports: https://main.kyverno.io/docs/policy-reports/background/
 
 == Einschränkung der BackgroundScans
 
-Die backgroundScans haben eine wichtige Einschränkung, die unten auf der Seite beschrieben ist: https://main.kyverno.io/docs/policy-reports/background/
+Die BackgroundScans haben eine wichtige Einschränkung, die unten auf der Seite beschrieben ist: https://main.kyverno.io/docs/policy-reports/background/
 
 Sie funktionieren nur bei Objekten aus den Bereichen "request.object" und "request.namespace". Daher funktionieren sie nicht bei z.B. Rollen.
 
-Was aber hat es mit dem Bereich "request.object" überhaupt auf sich? Denn in einer Ressource wie "Namespace" finden wir den Bereich nicht. Das liegt daran, dass am Admission Controller nicht das Objekt "Namespace" ankommt, sondern ein "AdmissionReview" für ein Namespace-Objekt.
+Was aber hat es mit dem Bereich "request.object" überhaupt auf sich? Denn in einer Ressource wie "Namespace" finden wir den Bereich nicht. Das liegt daran, dass am Admission Controller nicht das Objekt "Namespace" ankommt, sondern ein "AdmissionRequest" für ein Namespace-Objekt.
 
 Informationen dazu findet man unter https://kyverno.io/docs/writing-policies/variables/
 
-== Der AdmissionReview
+== Der AdmissionRequest
 
-Kyverno kann, im Gegensatz zu vielen anderen Tools, den AdmissionReview sichtbar machen. Diesen kann man nämlich nicht direkt über "oc" auslesen, es ist auch ein flüchtiges Objekt, welches nur kurzfristig existiert.
+Kyverno kann, im Gegensatz zu vielen anderen Tools, den AdmissionRequest sichtbar machen. Diesen kann man nämlich nicht direkt über "oc" auslesen. Zudem ist es auch ein flüchtiges Objekt, welches nur kurzfristig existiert.
 
 Das dafür notwendige Setting findet man auf der Seite https://kyverno.io/docs/troubleshooting/#policy-definition-not-working
 
@@ -320,9 +320,9 @@ Man sollte das nur kurzfristig machen und keinesfalls dauerhaft aktiv lassen, da
 
 Wenn wir in die YAML des Deployments für den "kyverno-admission-Controller" schauen, findet man dort bereits die Einstellung "--dumpPayload=false". Diesen setzen wir nun einmal auf "true", woraufhin OpenShift die Pod neu startet.
 
-Wenn wir nun einen neuen Namespace anlegen und dann die Logs für die Pod des "kyverno-admission-controllers" betrachten, sehen wir dort den AdmissionReview, der natürlich noch formatiert werden muss.
+Wenn wir nun einen neuen Namespace anlegen und dann die Logs für die Pod des "kyverno-admission-controllers" betrachten, sehen wir dort den AdmissionRequest, der natürlich noch formatiert werden muss.
 
-Und darin finden wir dann die entsprechenden Abschnitt des Requests wie "object" oder "namespace". Aber auch die, welche wir eben nicht mit einem BackgroundScan anfragen können wie "userInfo".
+Und darin finden wir dann die entsprechenden Abschnitt des Requests wie "object" oder "namespace". Aber auch die, welche wir eben nicht mit einem BackgroundScan abfragen können wie "userInfo".
 
 [source,json]
 ----

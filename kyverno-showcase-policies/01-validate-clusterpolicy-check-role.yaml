@@ -1,0 +1,30 @@
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    policies.kyverno.io/description: >-
+      Checks if a role or a clusterrole has wildcards in the verbs
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Role
+    policies.kyverno.io/title: Test Roles
+  name: test-roles
+spec:
+  validationFailureAction: audit
+  background: true
+  rules:
+    - name: wildcard-verbs
+      match:
+        any:
+        - resources:
+            kinds:
+              - Role
+              - ClusterRole
+      validate:
+        message: "Use of a wildcard ('*') in any verbs is forbidden."
+        deny:
+          conditions:
+            any:
+            - key: "{{ contains(request.object.rules[].verbs[], '*') }}"
+              operator: Equals
+              value: true
+
