@@ -11,6 +11,7 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   name: mywebsite
+  namespace: a-test
   labels:
     app: mywebsite
 spec:
